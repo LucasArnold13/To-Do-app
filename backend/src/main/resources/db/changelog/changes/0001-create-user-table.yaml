@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0001
+      author: du
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: username
+            constraintName: uq_users_username
