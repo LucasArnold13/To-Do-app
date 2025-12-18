@@ -2,7 +2,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export async function login(username: string, password: string) {
     console.log("API_URL:", API_URL);
-    const res = await fetch(`http://localhost:8080/auth/login`, {
+    const res = await fetch(`http://backend.internal.local:8080/auth/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
