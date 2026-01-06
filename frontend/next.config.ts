@@ -6,6 +6,7 @@ import type { NextConfig } from "next";
     allowedDevOrigins: [
       "http://127.0.0.1:8080",
       "http://localhost:8080",
+      "http://BackendBalancer-1649036085.eu-central-1.elb.amazonaws.com:8080",
     ],
   },
 };
