@@ -1,6 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-
-export { API_BASE_URL };
+const API_BASE_URL = 'http://backend.internal:8080';
 
 export async function requestRaw(
   endpoint: string,
@@ -34,20 +32,4 @@ export async function request<T>(
   }
 
   return response.json();
-}
-
-// Für Middleware - prüft nur ob Session valid ist
-export async function validateSession(sessionToken: string): Promise<boolean> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Cookie": `jwt=${sessionToken}`
-      },
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
 }
