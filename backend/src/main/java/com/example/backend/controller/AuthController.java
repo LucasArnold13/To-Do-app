@@ -39,7 +39,7 @@ public ResponseEntity<?> register(@RequestBody RegisterRequest request, HttpServ
                                               .httpOnly(true)
                                               .path("/")
                                               .maxAge(24 * 60 * 60)
-                                              .sameSite("None")
+                                              .sameSite("Lax")
                                               .build();
         response.addHeader("Set-Cookie", cookie.toString());
 
@@ -60,7 +60,7 @@ public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, Ht
                                           .httpOnly(true)    // nur Server-seitig lesbar
                                           .path("/")         // überall gültig
                                           .maxAge(24 * 60 * 60) // 1 Tag
-                                          .sameSite("None")   // optional
+                                          .sameSite("Lax")   // für HTTP
                                           .build();
     response.addHeader("Set-Cookie", cookie.toString());
 
@@ -91,7 +91,7 @@ public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, Ht
                                               .httpOnly(true)
                                               .path("/")
                                               .maxAge(0)
-                                              .sameSite("None")
+                                              .sameSite("Lax")
                                               .build();
         response.addHeader("Set-Cookie", cookie.toString());
 
