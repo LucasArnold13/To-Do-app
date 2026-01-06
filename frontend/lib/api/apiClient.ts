@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://backend.internal:8080';
+const API_BASE_URL = 'http://18.184.253.147:8080';
 
 export async function requestRaw(
   endpoint: string,
