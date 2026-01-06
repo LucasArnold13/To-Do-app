@@ -1,15 +1,10 @@
+import { authApi } from './api/authApi';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export async function login(username: string, password: string) {
     console.log("API_URL:", API_URL);
-    const res = await fetch(`http://backend.internal.local:8080/auth/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include', // damit Cookies (JWT) gespeichert werden
-        body: JSON.stringify({ username, password }),
-    });
+    const res = await authApi.login(username, password);
 
     if (!res.ok) {
         const errorData = await res.json();

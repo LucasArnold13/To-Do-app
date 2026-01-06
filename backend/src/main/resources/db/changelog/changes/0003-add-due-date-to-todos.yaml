@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0003
+      author: lucas
+      changes:
+        - addColumn:
+            tableName: todos
+            columns:
+              - column:
+                  name: due_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+        - createIndex:
+            tableName: todos
+            indexName: idx_todos_due_date
+            columns:
+              - column:
+                  name: due_date

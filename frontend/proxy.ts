@@ -1,43 +1,39 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { authApi } from "./lib/api/authApi";
 
 export const config = {
   matcher: [
     "/dashboard", 
     "/dashboard/:path*",
+    "/calendar",
+    "/calendar/:path*",
+    "/login",
+    "/register",
   ],
 };
 
 export async function proxy(req: NextRequest) {
-  // Cookie holen (vom Backend gesetzter HttpOnly Cookie)
-  const session = req.cookies.get("jwt")?.value; 
-  console.log("Session Cookie:", session);
-  // oder: req.cookies.get("jwt")?.value;
+  const session = req.cookies.get("jwt")?.value;
+  const { pathname } = req.nextUrl;
 
-  // Kein Cookie → direkt auf Login redirecten
-  if (!session) {
+  // Eingeloggt + versucht auf Login/Register → Redirect zu Dashboard
+  if (session && (pathname === "/login" || pathname === "/register")) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  // Nicht eingeloggt + versucht auf geschützte Seite → Redirect zu Login
+  if (!session && (pathname.startsWith("/dashboard") || pathname.startsWith("/calendar"))) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Optional: Backend check (nur wenn du willst)
-  // Wichtig: include sorgt dafür, dass Cookies mitgeschickt werden
-  try {
-    const res = await fetch(`http://localhost:8080/auth/me`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "Cookie": `jwt=${session}`
-      },
-    });
-
-    if (!res.ok) {
+  // Wenn eingeloggt, prüfe ob Session noch valid ist
+  if (session) {
+    const isValid = await authApi.validateSession(session);
+    if (!isValid) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
-  } catch (err) {
-    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Wenn alles ok → Seite freigeben
   return NextResponse.next();
 }

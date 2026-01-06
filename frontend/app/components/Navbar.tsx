@@ -1,10 +1,15 @@
+'use client';
+
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { authApi } from '@/lib/api/authApi';
 
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', current: false },
-  { name: 'To Dos', href: '/todos', current: true },
+  { name: 'Calendar', href: '/calendar', current: false },
 ]
 
 function classNames(...classes: (string | undefined | null | boolean)[]) {
@@ -12,16 +17,43 @@ function classNames(...classes: (string | undefined | null | boolean)[]) {
 }
 
 export default function Navbar() {
+  const router = useRouter();
+  const [username, setUsername] = useState<string>('');
+
+  useEffect(() => {
+    fetchUsername();
+  }, []);
+
+  const fetchUsername = async () => {
+    try {
+      const data = await authApi.getMe();
+      // Response format: "Eingeloggt als: username"
+      const name = data.replace('Eingeloggt als: ', '');
+      setUsername(name);
+    } catch (error) {
+      console.error('Failed to fetch username:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <Disclosure
       as="nav"
-      className="relative bg-gray-800/50 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/10"
+      className="relative bg-white shadow-sm after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-gray-200"
     >
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             {/* Mobile menu button*/}
-            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white focus:outline-2 focus:-outline-offset-1 focus:outline-indigo-500">
+            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-2 focus:-outline-offset-1 focus:outline-blue-500">
               <span className="absolute -inset-0.5" />
               <span className="sr-only">Open main menu</span>
               <Bars3Icon aria-hidden="true" className="block size-6 group-data-open:hidden" />
@@ -44,7 +76,7 @@ export default function Navbar() {
                     href={item.href}
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
-                      item.current ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                      item.current ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
                       'rounded-md px-3 py-2 text-sm font-medium',
                     )}
                   >
@@ -57,7 +89,7 @@ export default function Navbar() {
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             <button
               type="button"
-              className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500"
+              className="relative rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
             >
               <span className="absolute -inset-1.5" />
               <span className="sr-only">View notifications</span>
@@ -66,43 +98,26 @@ export default function Navbar() {
 
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-3">
-              <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                <span className="absolute -inset-1.5" />
+              <MenuButton className="relative flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
                 <span className="sr-only">Open user menu</span>
-                <img
-                  alt=""
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
-                />
+                {username ? (
+                  <span>{username}</span>
+                ) : (
+                  <span className="h-2 w-16 bg-gray-200 rounded animate-pulse" />
+                )}
               </MenuButton>
 
               <MenuItems
                 transition
-                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 outline -outline-offset-1 outline-white/10 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 py-1 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
               >
                 <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
-                  >
-                    Your profile
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
-                  >
-                    Settings
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
                     Sign out
-                  </a>
+                  </button>
                 </MenuItem>
               </MenuItems>
             </Menu>
@@ -119,7 +134,7 @@ export default function Navbar() {
               href={item.href}
               aria-current={item.current ? 'page' : undefined}
               className={classNames(
-                item.current ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                item.current ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
                 'block rounded-md px-3 py-2 text-base font-medium',
               )}
             >

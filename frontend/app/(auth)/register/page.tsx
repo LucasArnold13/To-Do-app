@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { authApi } from '@/lib/api/authApi';
 import Link from 'next/link';
 
 export default function RegisterPage() {
@@ -17,14 +18,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await authApi.register(username, password);
 
       if (!response.ok) {
         const errorData = await response.text();

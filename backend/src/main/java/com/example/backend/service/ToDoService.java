@@ -40,6 +40,7 @@ public class ToDoService {
                 existing.setTitle(todo.getTitle());
                 existing.setDescription(todo.getDescription());
                 existing.setCompleted(todo.getCompleted());
+                existing.setDueDate(todo.getDueDate());
                 return todoRepository.save(existing);
             })
             .orElseThrow(() -> new RuntimeException("ToDo not found with id: " + id));

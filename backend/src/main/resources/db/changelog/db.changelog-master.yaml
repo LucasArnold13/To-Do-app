@@ -3,3 +3,5 @@ databaseChangeLog:
       file: classpath:db/changelog/changes/0001-create-user-table.yaml
   - include:
       file: classpath:db/changelog/changes/0002-create-todos-table.yaml
+  - include:
+      file: classpath:db/changelog/changes/0003-add-due-date-to-todos.yaml
