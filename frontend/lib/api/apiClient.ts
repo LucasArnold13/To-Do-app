@@ -1,5 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080';
-"backendBalancer-1649036085.eu-central-1.elb.amazonaws.com"
+const API_BASE_URL = 'https://api.test-app.info';
 
 export async function requestRaw(
   endpoint: string,
