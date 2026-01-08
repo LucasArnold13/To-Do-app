@@ -60,7 +60,7 @@ public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, Ht
                                           .httpOnly(true)    // nur Server-seitig lesbar
                                           .path("/")         // überall gültig
                                           .maxAge(24 * 60 * 60) // 1 Tag
-                                          .sameSite("Lax")   // für HTTP
+                                          .sameSite("None")   // für HTTP
                                           .build();
     response.addHeader("Set-Cookie", cookie.toString());
 

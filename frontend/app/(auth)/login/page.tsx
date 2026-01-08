@@ -22,67 +22,81 @@ export default function LoginPage() {
         }
     };
 
-return (
-  <div style={{
-    maxWidth: '400px',
-    margin: '50px auto',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px',
-    fontFamily: 'Arial, sans-serif'
-  }}>
-    <h2 style={{ textAlign: 'center', marginBottom: '10px' }}>Login</h2>
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+            <div className="w-full max-w-md">
+                <div className="bg-white rounded-2xl shadow-xl p-8">
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Willkommen zurück</h1>
+                        <p className="text-gray-600">Melde dich bei deinem Account an</p>
+                    </div>
 
-    <input
-      placeholder="Username"
-      value={username}
-      onChange={(e) => setUsername(e.target.value)}
-      style={{
-        padding: '10px',
-        borderRadius: '4px',
-        border: '1px solid #ccc',
-        fontSize: '16px'
-      }}
-    />
+                    {/* Error Message */}
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-red-600 text-sm text-center">{error}</p>
+                        </div>
+                    )}
 
-    <input
-      placeholder="Password"
-      type="password"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      style={{
-        padding: '10px',
-        borderRadius: '4px',
-        border: '1px solid #ccc',
-        fontSize: '16px'
-      }}
-    />
+                    {/* Info Box */}
+                    <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-green-700 text-sm text-center">
+                            Test-Account: <strong>testuser</strong> / <strong>password123</strong>
+                        </p>
+                    </div>
 
-    <button
-      onClick={handleLogin}
-      style={{
-        padding: '10px',
-        borderRadius: '4px',
-        border: 'none',
-        backgroundColor: '#0070f3',
-        color: 'white',
-        fontSize: '16px',
-        cursor: 'pointer'
-      }}
-    >
-      Login
-    </button>
+                    {/* Form */}
+                    <div className="space-y-5">
+                        <div>
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                                Benutzername
+                            </label>
+                            <input
+                                id="username"
+                                type="text"
+                                placeholder="Dein Benutzername"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 outline-none"
+                            />
+                        </div>
 
-    {error && (
-      <p style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>
-        {error}
-      </p>
-    )}
-  </div>
-);
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                                Passwort
+                            </label>
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="Dein Passwort"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 outline-none"
+                            />
+                        </div>
 
+                        <button
+                            onClick={handleLogin}
+                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                        >
+                            Anmelden
+                        </button>
+                    </div>
+
+                    {/* Register Link */}
+                    <div className="mt-6 text-center">
+                        <p className="text-gray-600 text-sm">
+                            Noch kein Account?{' '}
+                            <a href="/register" className="text-blue-600 hover:text-blue-700 font-semibold">
+                                Jetzt registrieren
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }

@@ -87,14 +87,6 @@ export default function Navbar() {
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button
-              type="button"
-              className="relative rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
-            >
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">View notifications</span>
-              <BellIcon aria-hidden="true" className="size-6" />
-            </button>
 
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-3">
@@ -114,7 +106,7 @@ export default function Navbar() {
                 <MenuItem>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 data-focus:bg-red-50 data-focus:outline-hidden font-medium"
                   >
                     Sign out
                   </button>
