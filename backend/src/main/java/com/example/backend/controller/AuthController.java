@@ -41,6 +41,7 @@ public ResponseEntity<?> register(@RequestBody RegisterRequest request, HttpServ
                                               .maxAge(24 * 60 * 60)
                                               .sameSite("None")
                                               .secure(true)
+                                              .domain(".test-app.info")
                                               .build();
         response.addHeader("Set-Cookie", cookie.toString());
 
@@ -63,6 +64,7 @@ public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, Ht
                                           .maxAge(24 * 60 * 60) // 1 Tag
                                           .sameSite("None")   
                                           .secure(true)
+                                          .domain(".test-app.info")
                                           .build();
     response.addHeader("Set-Cookie", cookie.toString());
 
@@ -95,6 +97,7 @@ public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, Ht
                                               .maxAge(0)
                                               .sameSite("None")
                                               .secure(true)
+                                              .domain(".test-app.info")
                                               .build();
         response.addHeader("Set-Cookie", cookie.toString());
 
