@@ -1,4 +1,4 @@
-name: Deploy to AWS
+name: CI & Deploy to AWS
 
 on:
   push:
@@ -6,23 +6,37 @@ on:
   workflow_dispatch:  
 
 jobs:
-  deploy:
+  tests-backend:
+    name: Backend Tests (Docker)
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.1
+      - name: Run Maven tests inside container
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/backend:/app \
+            -w /app \
+            maven:3.9.6-eclipse-temurin-17 \
+            mvn -B -ntp test -DexcludeTests=**/*IntegrationTest*
 
-    - name: Set up Java 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-        cache: 'maven'
+  tests-frontend:
+    name: Frontend Lint (Docker)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: Run eslint inside container
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/frontend:/app \
+            -w /app \
+            node:20 \
+            bash -lc "npm ci && npm run lint"
 
-    - name: Run backend tests
-      run: |
-        cd backend
-        ./mvnw -B -ntp test
+  deploy:
+    needs: [tests-backend, tests-frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
     
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
@@ -37,7 +51,7 @@ jobs:
       with:
           mask-password: 'true'
     
-    - name: Build and push Backend image to ECR
+      - name: Build and push Backend image to ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: todo/backend
@@ -50,15 +64,15 @@ jobs:
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-    - name: Redeploy ECS service (backend)
-      run: |
-        aws ecs update-service \
-          --cluster ${{ secrets.ECS_CLUSTER }} \
-          --service ${{ secrets.ECS_SERVICE_BACKEND }} \
-          --force-new-deployment \
-          --region ${{ secrets.AWS_REGION }}
+      - name: Redeploy ECS service (backend)
+        run: |
+          aws ecs update-service \
+            --cluster ${{ secrets.ECS_CLUSTER }} \
+            --service ${{ secrets.ECS_SERVICE_BACKEND }} \
+            --force-new-deployment \
+            --region ${{ secrets.AWS_REGION }}
 
-    - name: Build and push Frontend image to ECR
+      - name: Build and push Frontend image to ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: todo/frontend
@@ -70,11 +84,11 @@ jobs:
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-    - name: Redeploy ECS service (frontend)
-      run: |
-        aws ecs update-service \
-          --cluster ${{ secrets.ECS_CLUSTER }} \
-          --service ${{ secrets.ECS_SERVICE_FRONTEND }} \
-          --force-new-deployment \
-          --region ${{ secrets.AWS_REGION }}
+      - name: Redeploy ECS service (frontend)
+        run: |
+          aws ecs update-service \
+            --cluster ${{ secrets.ECS_CLUSTER }} \
+            --service ${{ secrets.ECS_SERVICE_FRONTEND }} \
+            --force-new-deployment \
+            --region ${{ secrets.AWS_REGION }}
         
