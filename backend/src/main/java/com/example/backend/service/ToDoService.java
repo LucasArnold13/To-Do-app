@@ -1,5 +1,7 @@
 package com.example.backend.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.backend.model.ToDo;
@@ -28,6 +30,10 @@ public class ToDoService {
 
     public List<ToDo> getToDosForUser(User user) {
         return todoRepository.findByUser(user);
+    }
+
+    public Page<ToDo> getToDosForUserPaged(User user, Pageable pageable) {
+        return todoRepository.findByUser(user, pageable);
     }
 
     public List<ToDo> getCompletedToDosForUser(User user, Boolean completed) {

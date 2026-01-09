@@ -1,9 +1,14 @@
 package com.example.backend.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.example.backend.dto.PagedResponse;
 import com.example.backend.model.ToDo;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
@@ -51,10 +56,32 @@ public class ToDoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ToDo>> list() {
+    public ResponseEntity<PagedResponse<ToDo>> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDir
+    ) {
         User user = getCurrentUser();
-        List<ToDo> todos = todoService.getToDosForUser(user);
-        return ResponseEntity.ok(todos);
+        
+        Sort sort = sortDir.equalsIgnoreCase("ASC") 
+            ? Sort.by(sortBy).ascending() 
+            : Sort.by(sortBy).descending();
+        
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ToDo> todoPage = todoService.getToDosForUserPaged(user, pageable);
+        
+        PagedResponse<ToDo> response = new PagedResponse<>(
+            todoPage.getContent(),
+            todoPage.getNumber(),
+            todoPage.getSize(),
+            todoPage.getTotalElements(),
+            todoPage.getTotalPages(),
+            todoPage.isLast(),
+            todoPage.isFirst()
+        );
+        
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/completed/{completed}")

@@ -1,9 +1,19 @@
 import { Todo } from '@/types/todo';
 import { request } from './apiClient';
 
+export interface PagedResponse<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+  first: boolean;
+}
+
 export const todoApi = {
-  getAllTodos: (): Promise<Todo[]> => 
-    request<Todo[]>('/api/todos'),
+  getAllTodos: (page = 0, size = 10, sortBy = 'id', sortDir = 'DESC'): Promise<PagedResponse<Todo>> => 
+    request<PagedResponse<Todo>>(`/api/todos?page=${page}&size=${size}&sortBy=${sortBy}&sortDir=${sortDir}`),
 
   getTodoById: (id: number): Promise<Todo> => 
     request<Todo>(`/api/todos/${id}`),
