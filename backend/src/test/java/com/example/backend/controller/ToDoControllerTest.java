@@ -72,7 +72,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testCreateToDo_201_Created() {
+    void create_valid_created() {
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
         when(todoService.createToDo(any(ToDo.class))).thenReturn(testToDo);
 
@@ -85,7 +85,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testGetToDo_200_Ok() {
+    void get_exists_ok() {
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
         when(todoService.getToDo(1L)).thenReturn(Optional.of(testToDo));
 
@@ -97,7 +97,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testGetToDo_404_NotFound() {
+    void get_missing_notFound() {
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
         when(todoService.getToDo(999L)).thenReturn(Optional.empty());
 
@@ -107,7 +107,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testGetToDo_404_NotOwner() {
+    void get_notOwner_notFound() {
         User otherUser = new User();
         otherUser.setId(2L);
         otherUser.setUsername("otheruser");
@@ -126,7 +126,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testListToDos_200_Ok() {
+    void list_valid_ok() {
         List<ToDo> todos = new ArrayList<>();
         todos.add(testToDo);
 
@@ -141,7 +141,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testUpdateToDo_200_Ok() {
+    void update_valid_ok() {
         ToDo updatedToDo = new ToDo();
         updatedToDo.setTitle("Updated Title");
         updatedToDo.setDescription("Updated Description");
@@ -159,7 +159,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testUpdateToDo_404_NotFound() {
+    void update_missing_notFound() {
         ToDo updatedToDo = new ToDo();
         updatedToDo.setTitle("Updated Title");
 
@@ -172,7 +172,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testDeleteToDo_204_NoContent() {
+    void delete_exists_noContent() {
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
         when(todoService.getToDo(1L)).thenReturn(Optional.of(testToDo));
 
@@ -183,7 +183,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testDeleteToDo_404_NotFound() {
+    void delete_missing_notFound() {
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
         when(todoService.getToDo(999L)).thenReturn(Optional.empty());
 
@@ -194,7 +194,7 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testListByCompleted_200_Ok() {
+    void listByCompleted_completedTrue_ok() {
         List<ToDo> completedTodos = new ArrayList<>();
         testToDo.setCompleted(true);
         completedTodos.add(testToDo);

@@ -33,7 +33,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void testRegister_201_Success() {
+    void register_newUser_created() {
         RegisterRequest request = new RegisterRequest("newuser", "password123");
         String expectedJwt = "jwt.token.here";
 
@@ -57,7 +57,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void testRegister_409_UserAlreadyExists() {
+    void register_existingUser_conflict() {
         RegisterRequest request = new RegisterRequest("existinguser", "password123");
 
         when(authService.register("existinguser", "password123"))
@@ -71,7 +71,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void testRegister_409_InvalidInput() {
+    void register_invalidInput_conflict() {
         RegisterRequest request = new RegisterRequest(null, "password123");
 
         when(authService.register(null, "password123"))
